@@ -38,9 +38,9 @@
       <div class="container">
         <nav class="blog-nav">
           <a class="blog-nav-item" href="/">Home</a>
-          <a class="blog-nav-item active" href="/slides">Slides</a>
+          <a class="blog-nav-item" href="/slides">Slides</a>
           <a class="blog-nav-item" href="/mycat">Mycat</a>
-          <a class="blog-nav-item" href="/contact">Contact</a>
+          <a class="blog-nav-item active" href="/contact">Contact</a>
         </nav>
       </div>
     </div>
@@ -48,23 +48,9 @@
     <div class="container">
 
         <div class="blog-header">
-            <h1 class="blog-title">Slides list</h1>
-            <p class="lead blog-description">勉強会用スライド</p>
+            <h1 class="blog-title">Contact</h1>
+            <p class="lead blog-description">お問合せはこちら</p>
         </div>
-
-<?php
-$file = file_get_contents('./list.json', FILE_USE_INCLUDE_PATH);
-$list = json_decode($file, true);
-?>
-
-<table class="table table-hover">
-<?php foreach ($list as $key => $val): ?>
-  <tr>
-  <td><?php echo $val['id'] ?></td>
-  <td><a href='<?php echo $val['id'] ?>'><?php echo $val['title'] ?></a></td>
-  </tr>
-<?php endforeach ?>
-</table>
 
     </div><!-- /.container -->
 
