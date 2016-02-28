@@ -6,6 +6,13 @@ if (!file_exists($md_file)) {
     header("Location: ./index.php");
     exit;
 }
+
+$file = file_get_contents('./list.json', FILE_USE_INCLUDE_PATH);
+$list = json_decode($file, true);
+$key = array_search($id , array_column($list, 'id'));
+
+$title = $list[$key]['title'];
+
 ?>
 
 <!doctype html>
@@ -14,9 +21,9 @@ if (!file_exists($md_file)) {
     <head>
         <meta charset="utf-8">
 
-        <title>kaotil.com – slides</title>
+        <title><?php echo $title ?> | kaotil.com</title>
 
-        <meta name="description" content="勉強会用スライド置き場">
+        <meta name="description" content="勉強会用スライド">
         <meta name="author" content="kaotil">
 
         <meta name="apple-mobile-web-app-capable" content="yes">
