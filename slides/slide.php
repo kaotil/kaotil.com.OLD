@@ -12,6 +12,7 @@ $list = json_decode($file, true);
 $key = array_search($id , array_column($list, 'id'));
 
 $title = $list[$key]['title'];
+$description = $list[$key]['description'];
 
 ?>
 
@@ -20,11 +21,16 @@ $title = $list[$key]['title'];
 
     <head>
         <meta charset="utf-8">
-
         <title><?php echo $title ?> | kaotil.com</title>
-
-        <meta name="description" content="勉強会用スライド">
-        <meta name="author" content="kaotil">
+        <meta name="description" content="<?php echo $description ?>">
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="<?php echo $title ?> | kaotil.com"/>
+        <meta property="og:description" content="<?php echo $description ?>" />
+        <meta property="og:image" content="http://kaotil.com/img/kaotil.com.png" />
+        <meta property="og:url" content="http://kaotil.com/slides/<?php echo $id; ?>" />
+        <meta property="og:site_name" content="kaotil.com"/>
+        <meta content="summary" name="twitter:card" />
+        <meta content="@kaotil" name="twitter:site" />
 
         <meta name="apple-mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
