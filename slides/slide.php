@@ -82,6 +82,7 @@ $description = $list[$key]['description'];
             text-transform: none;
           }
         </style>
+        <link rel="stylesheet" href="/slides/css/custom.css">
     </head>
 
     <body>
@@ -110,7 +111,7 @@ $description = $list[$key]['description'];
             Reveal.initialize({
                 controls: true,
                 progress: true,
-                history: false,
+                history: true,
                 center: true,
                 width: 1000,
 
