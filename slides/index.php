@@ -70,6 +70,7 @@ $list = json_decode($file, true);
 <?php foreach ($list as $key => $val): ?>
   <tr>
   <td><?php echo $val['id'] ?></td>
+  <td><?php echo $val['date'] ?></td>
   <td><a href='<?php echo $val['id'] ?>'><?php echo $val['title'] ?></a></td>
   </tr>
 <?php endforeach ?>
