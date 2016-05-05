@@ -114,6 +114,7 @@ $description = $list[$key]['description'];
                 history: true,
                 center: true,
                 width: 1000,
+                slideNumber: 'c/t',
 
                 transition: 'slide', // none/fade/slide/convex/concave/zoom
 
