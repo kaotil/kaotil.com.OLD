@@ -49,7 +49,6 @@
           <a class="blog-nav-item" href="/">Home</a>
           <a class="blog-nav-item active" href="/slides">Slides</a>
           <a class="blog-nav-item" href="/mycat">Mycat</a>
-          <a class="blog-nav-item" href="/contact">Contact</a>
         </nav>
       </div>
     </div>
