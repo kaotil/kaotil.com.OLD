@@ -23,7 +23,7 @@ $description = $list[$key]['description'];
         <meta charset="utf-8">
         <title><?php echo $title ?> | kaotil.com</title>
         <meta name="description" content="<?php echo $description ?>">
-        <meta property="og:type" content="article"/>
+        <meta property="og:type" content="website"/>
         <meta property="og:title" content="<?php echo $title ?> | kaotil.com"/>
         <meta property="og:description" content="<?php echo $description ?>" />
         <meta property="og:image" content="http://kaotil.com/img/kaotil.com.png" />
