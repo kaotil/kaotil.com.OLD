@@ -111,7 +111,7 @@ $description = $list[$key]['description'];
             Reveal.initialize({
                 controls: true,
                 progress: true,
-                history: false,
+                history: true,
                 center: true,
                 width: 1000,
                 slideNumber: 'c/t',
