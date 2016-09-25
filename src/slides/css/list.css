@@ -1,0 +1,20 @@
+ul.slist {
+  list-style:none;
+}
+
+ul.slist li {
+  border-bottom: 1px solid #ccc;
+  display: table;
+}
+
+ul.slist li:hover {
+  background-color: #f5f5f5;
+}
+
+span.col {
+  /*display: inline-block;*/
+  padding: 0.5em 1em 0.5em 1em;
+  display: table-cell;
+  vertical-align: top;
+}
+
