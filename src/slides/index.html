@@ -89,11 +89,12 @@
 <script type="text/javascript">
 <!--
   var env = 'v1';
-  if (document.domain == 'kaotil.com') {
-    env = 'v1';
+  if (document.domain == 'stg.kaotil.com') {
+    env = 'stg';
   }
 
   var url = 'https://api.kaotil.com/'+env+'/slide';
+//console.log(url);
 
   requestAjax(url, null, function(response){
     res = JSON.parse(response);
