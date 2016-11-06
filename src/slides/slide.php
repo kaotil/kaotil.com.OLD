@@ -43,6 +43,8 @@ $description = $list[$key]['description'];
         <!-- Code syntax highlighting -->
         <link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
 
+        <script src="./scripts/common.js"></script>
+
         <!-- Printing and PDF exports -->
         <script>
             var link = document.createElement( 'link' );
@@ -111,7 +113,7 @@ $description = $list[$key]['description'];
             Reveal.initialize({
                 controls: true,
                 progress: true,
-                history: false,
+                history: true,
                 center: true,
                 width: 1000,
                 slideNumber: 'c/t',
@@ -133,3 +135,39 @@ $description = $list[$key]['description'];
 
     </body>
 </html>
+
+<script type="text/javascript">
+<!--
+  var env = 'stg';
+  if (document.domain == 'kaotil.com') {
+    env = 'prd';
+  }
+  var res = location.href.match(/^.*\D+\/slides\/(\d+)\D+$/);
+  var num = Number(res[1]);
+console.log('------------------');
+//console.log(location.href);
+//console.log(location.href.match(/^.*\D+\/slides\/(\d+)\D+$/));
+console.log(num);
+
+  var data = { 
+    operation: 'query', 
+    payload: { 
+      TableName: 'slide_list',
+      KeyConditionExpression: 'env = :env AND num = :num',
+      ExpressionAttributeValues: {
+        ':env': env,
+        ':num': num
+      },
+      ScanIndexForward: 'false'
+    }
+  };
+
+  requestAjax("https://api.kaotil.com/v1/slide", data, function(response){
+    res = JSON.parse(response);
+console.log(res);
+  });
+// -->
+</script>
+
+
+
