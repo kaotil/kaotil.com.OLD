@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>test111111</title>
+  </head>
+  <body>
+<script type="text/javascript">
+<!--
+
+var requestAjax = function(endpoint, data, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function(){
+        if (this.readyState==4 && this.status==200) {
+            callback(this.response);
+        }
+    };
+    xhr.open('POST',endpoint,true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.send(JSON.stringify(data));
+};
+
+var data = { 
+    operation: 'query', 
+    payload: { 
+        TableName: 'slide_list',
+        KeyConditionExpression: 'env = :val',
+        ExpressionAttributeValues: {
+          ':val': 'prd'
+        },
+        ScanIndexForward: 'false'
+    }
+}; 
+
+requestAjax("https://api.kaotil.com/v1/slide", data, function(response){
+    console.log(response);
+});
+
+// -->
+</script>
+
+
+  </body>
+</html>
