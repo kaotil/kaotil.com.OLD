@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>test7</title>
+  </head>
+  <body>
+<script type="text/javascript">
+<!--
+
+
+//var data = { operation: 'scan' };
+var data = { 
+    operation: 'query', 
+    payload: { 
+        TableName: 'slide_list',
+        KeyConditionExpression: 'env = :val',
+        ExpressionAttributeValues: {
+          ':val': 'prd'
+        },
+        ScanIndexForward: 'false'
+    }
+}; 
+
+
+var xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function()
+{
+    var READYSTATE_COMPLETED = 4;
+    var HTTP_STATUS_OK = 200;
+
+    if( this.readyState == READYSTATE_COMPLETED
+     && this.status == HTTP_STATUS_OK )
+    {
+        // レスポンスの表示
+        console.log( this.responseText );
+    }
+}
+
+xhr.open( 'POST', 'https://api.kaotil.com/prod/slide' );
+//xhr.open( 'POST', 'https://e76c7m9p0b.execute-api.ap-northeast-1.amazonaws.com/v1/slide' );
+//xhr.open( 'POST', 'https://xip2f3g158.execute-api.ap-northeast-1.amazonaws.com/v1/slide' );
+//xhr.open( 'POST', 'https://ac33yyve49.execute-api.ap-northeast-1.amazonaws.com/v1/slide' );
+
+// サーバに対して解析方法を指定する
+xhr.setRequestHeader('Content-Type', 'application/json');
+
+// データをリクエスト ボディに含めて送信する
+xhr.send(JSON.stringify(data));
+
+// -->
+</script>
+
+
+  </body>
+</html>
