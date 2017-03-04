@@ -5,6 +5,9 @@ machine:
 #dependencies:
 #  pre:
 #    - sudo /usr/local/bin/pip install awscli
+test:
+  override:
+    - echo Hello World
 deployment:
   master:
     branch: master
