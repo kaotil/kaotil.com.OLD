@@ -3,7 +3,7 @@ $id = $_GET['id'];
 $md_file = sprintf('md/%04d.md', $id);
 
 if (!file_exists($md_file)) {
-    header("Location: ./index.php");
+    header("Location: ./index.html");
     exit;
 }
 
