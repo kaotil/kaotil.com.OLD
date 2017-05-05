@@ -6,12 +6,11 @@ dependencies:
     #- curl -L https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
     #- chmod +x /usr/local/bin/docker-compose
     - sudo service docker start
-    - cd ecs
-    - ls -l
-    - cd ecs; docker-compose build --no-cache; docker-compose up -d
+    - cd ecs; docker-compose build --no-cache
 test:
   override:
     - echo Hello World
+    - cd ecs; docker-compose up -d
     - curl http://localhost -o /dev/null -w '%{http_code}\n' -s | grep 200
 deployment:
   master:
