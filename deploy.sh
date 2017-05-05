@@ -30,65 +30,51 @@ push_ecr_image(){
 
 # Create Task Definition
 make_task_def(){
-    task_template_storage='[
-        {
-            "name": "%s",
-            "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
-            "essential": true,
-            "memory": 200,
-            "cpu": 10,
-            "entryPoint": ["sh", "-c"],
-            "command": ["while true; do date > /usr/local/apache2/htdocs/index.html; sleep 1; done"]
-        }
-    ]'
+    task_template_storage='{
+        "name": "%s",
+        "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
+        "essential": true,
+        "memory": 200,
+        "cpu": 10,
+        "entryPoint": ["sh", "-c"],
+        "command": ["while true; do date > /usr/local/apache2/htdocs/index.html; sleep 1; done"]
+    }'
     task_def_storage=$(printf "$task_template_storage" ${AWS_ECS_CONTAINER_NAMES[0]} $AWS_ACCOUNT_ID ${AWS_DEFAULT_REGION} ${AWS_ECR_REP_NAMES[0]} ${TAG})
 
     task_template_web='{
-            "name": "%s",
-            "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
-            "essential": true,
-            "memory": 300,
-            "cpu": 10,
-            "portMappings": [
-                {
-                    "containerPort": 80,
-                    "hostPort": 80
-                }
-            ]
-            "volumesFrom": [
-              {
+        "name": "%s",
+        "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
+        "essential": true,
+        "memory": 300,
+        "cpu": 10,
+        "portMappings": [
+            {
+                "containerPort": 80,
+                "hostPort": 80
+            }
+        ],
+        "volumesFrom": [
+            {
                 "sourceContainer": "storage",
                 "readOnly": true
-              }
-            ]
+            }
+        ]
     }'
     task_def_web=$(printf "$task_template_web" ${AWS_ECS_CONTAINER_NAMES[1]} $AWS_ACCOUNT_ID ${AWS_DEFAULT_REGION} ${AWS_ECR_REP_NAMES[1]} ${TAG})
-
-    task_template='{
-            "name": "%s",
-            "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
-            "essential": true,
-            "memory": 200,
-            "cpu": 10,
-            "portMappings": [
-                {
-                    "containerPort": 80,
-                    "hostPort": 80
-                }
-            ]
-    }'
 
     tasks=("${task_def_storage}" "${task_def_web}")
 }
 
 register_definition() {
 
-    if revision=$(aws ecs register-task-definition --container-definitions "[${tasks[0]}, ${tasks[1]}]" --family ${AWS_ECS_TASKDEF_NAME} | $JQ '.taskDefinition.taskDefinitionArn'); then
-        echo "Revision: $revision"
-    else
-        echo "Failed to register task definition"
-        return 1
-    fi
+    echo "[${tasks[0]},${tasks[1]}]"
+    #if revision=$(aws ecs register-task-definition --container-definitions "[${tasks[0]},${tasks[1]}]" --family ${AWS_ECS_TASKDEF_NAME} | $JQ '.taskDefinition.taskDefinitionArn'); then
+    #    echo "Revision: $revision"
+    #else
+    #    echo "Failed to register task definition"
+    #    return 1
+    #fi
+
 }
 
 deploy_cluster() {
