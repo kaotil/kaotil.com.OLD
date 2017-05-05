@@ -5,9 +5,66 @@ AWS_ECS_TASKDEF_NAME=ecs-task
 AWS_ECS_CLUSTER_NAME=ecs-cluster
 AWS_ECS_SERVICE_NAME=ecs-service
 AWS_ECR_REP_NAME=("kaotil.com/storage" "kaotil.com/web")
+TAG=latest
+
+# more bash-friendly output for jq
+JQ="jq --raw-output --exit-status"
+
+configure_aws_cli(){
+    aws --version
+    aws configure set default.region ${AWS_DEFAULT_REGION}
+    aws configure set default.output json
+}
+
+push_ecr_image(){
+    eval $(aws ecr get-login --region ${AWS_DEFAULT_REGION})
+
+    for rep_name in ${AWS_ECR_REP_NAME[@]}
+    do
+        echo "${rep_name}"
+        docker tag ecs_web:${TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${rep_name}:${TAG}
+        docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${rep_name}:${TAG}
+    done
+}
 
 # Create Task Definition
 make_task_def(){
+    task_template_storage='[
+        {
+            "name": "%s",
+            "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
+            "essential": true,
+            "memory": 200,
+            "cpu": 10,
+            "entryPoint": ["sh", "-c"],
+            "command": ["while true; do date > /usr/local/apache2/htdocs/index.html; sleep 1; done"]
+        }
+    ]'
+    task_def_storage=$(printf "$task_template_storage" ${AWS_ECS_TASKDEF_NAME} $AWS_ACCOUNT_ID ${AWS_DEFAULT_REGION} ${AWS_ECR_REP_NAME[0]} ${TAG})
+
+    task_template_web='[
+        {
+            "name": "%s",
+            "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
+            "essential": true,
+            "memory": 300,
+            "cpu": 10,
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 80
+                }
+            ]
+            "volumesFrom": [
+              {
+                "sourceContainer": "storage",
+                "readOnly": true
+              }
+            ]
+        }
+    ]'
+    task_def_web=$(printf "$task_template_web" ${AWS_ECS_TASKDEF_NAME} $AWS_ACCOUNT_ID ${AWS_DEFAULT_REGION} ${AWS_ECR_REP_NAME[1]} ${TAG})
+
     task_template='[
         {
             "name": "%s",
@@ -23,17 +80,31 @@ make_task_def(){
             ]
         }
     ]'
+    #task_def=$(printf "$task_template" ${AWS_ECS_TASKDEF_NAME} $AWS_ACCOUNT_ID ${AWS_DEFAULT_REGION} ${AWS_ECR_REP_NAME} ${TAG})
+    #echo ${task_def}
 
-    task_def=$(printf "$task_template" ${AWS_ECS_TASKDEF_NAME} $AWS_ACCOUNT_ID ${AWS_DEFAULT_REGION} ${AWS_ECR_REP_NAME} $CIRCLE_SHA1)
+    #for key in ${!AWS_ECR_REP_NAME[@]}
+    #do
+        #echo "key - $key, value - ${AWS_ECR_REP_NAME[$key]}"
+    #    task_def[$key]=$(printf "$task_template[$key]" ${AWS_ECS_TASKDEF_NAME} $AWS_ACCOUNT_ID ${AWS_DEFAULT_REGION} ${AWS_ECR_REP_NAME} ${TAG})
+    #done
+
+    tasks=("${task_def_storage}" "${task_def_web}")
 }
 
-# more bash-friendly output for jq
-JQ="jq --raw-output --exit-status"
+register_definition() {
 
-configure_aws_cli(){
-    aws --version
-    aws configure set default.region ${AWS_DEFAULT_REGION}
-    aws configure set default.output json
+    for key in ${!tasks[@]}
+    do
+        echo ${tasks[$key]}
+
+        if revision=$(aws ecs register-task-definition --container-definitions "${tasks[$key]}" --family ${AWS_ECS_TASKDEF_NAME} | $JQ '.taskDefinition.taskDefinitionArn'); then
+            echo "Revision: $revision"
+        else
+            echo "Failed to register task definition"
+            return 1
+        fi
+    done
 }
 
 deploy_cluster() {
@@ -64,28 +135,8 @@ deploy_cluster() {
 }
 
 
-push_ecr_image(){
-    eval $(aws ecr get-login --region ${AWS_DEFAULT_REGION})
-
-    for rep_name in ${AWS_ECR_REP_NAME[@]}
-    do
-        echo "${rep_name}"
-        docker tag ecs_web:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${rep_name}:latest
-        docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${rep_name}:latest
-    done
-}
-
-register_definition() {
-
-    if revision=$(aws ecs register-task-definition --container-definitions "$task_def" --family ${AWS_ECS_TASKDEF_NAME} | $JQ '.taskDefinition.taskDefinitionArn'); then
-        echo "Revision: $revision"
-    else
-        echo "Failed to register task definition"
-        return 1
-    fi
-
-}
-
 #configure_aws_cli
-push_ecr_image
+#push_ecr_image
+make_task_def
+register_definition
 #deploy_cluster
