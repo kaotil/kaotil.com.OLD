@@ -4,7 +4,8 @@
 AWS_ECS_TASKDEF_NAME=ecs-task
 AWS_ECS_CLUSTER_NAME=ecs-cluster
 AWS_ECS_SERVICE_NAME=ecs-service
-AWS_ECR_REP_NAME=("kaotil.com/storage" "kaotil.com/web")
+AWS_ECS_CONTAINER_NAMES=("storage" "web")
+AWS_ECR_REP_NAMES=("kaotil.com/storage" "kaotil.com/web")
 TAG=latest
 
 # more bash-friendly output for jq
@@ -19,7 +20,7 @@ configure_aws_cli(){
 push_ecr_image(){
     eval $(aws ecr get-login --region ${AWS_DEFAULT_REGION})
 
-    for rep_name in ${AWS_ECR_REP_NAME[@]}
+    for rep_name in ${AWS_ECR_REP_NAMES[@]}
     do
         echo "${rep_name}"
         docker tag ecs_web:${TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${rep_name}:${TAG}
@@ -40,7 +41,7 @@ make_task_def(){
             "command": ["while true; do date > /usr/local/apache2/htdocs/index.html; sleep 1; done"]
         }
     ]'
-    task_def_storage=$(printf "$task_template_storage" ${AWS_ECS_TASKDEF_NAME} $AWS_ACCOUNT_ID ${AWS_DEFAULT_REGION} ${AWS_ECR_REP_NAME[0]} ${TAG})
+    task_def_storage=$(printf "$task_template_storage" ${AWS_ECS_CONTAINER_NAMES[0]} $AWS_ACCOUNT_ID ${AWS_DEFAULT_REGION} ${AWS_ECR_REP_NAMES[0]} ${TAG})
 
     task_template_web='[
         {
@@ -63,7 +64,7 @@ make_task_def(){
             ]
         }
     ]'
-    task_def_web=$(printf "$task_template_web" ${AWS_ECS_TASKDEF_NAME} $AWS_ACCOUNT_ID ${AWS_DEFAULT_REGION} ${AWS_ECR_REP_NAME[1]} ${TAG})
+    task_def_web=$(printf "$task_template_web" ${AWS_ECS_CONTAINER_NAMES[1]} $AWS_ACCOUNT_ID ${AWS_DEFAULT_REGION} ${AWS_ECR_REP_NAMES[1]} ${TAG})
 
     task_template='[
         {
@@ -80,14 +81,6 @@ make_task_def(){
             ]
         }
     ]'
-    #task_def=$(printf "$task_template" ${AWS_ECS_TASKDEF_NAME} $AWS_ACCOUNT_ID ${AWS_DEFAULT_REGION} ${AWS_ECR_REP_NAME} ${TAG})
-    #echo ${task_def}
-
-    #for key in ${!AWS_ECR_REP_NAME[@]}
-    #do
-        #echo "key - $key, value - ${AWS_ECR_REP_NAME[$key]}"
-    #    task_def[$key]=$(printf "$task_template[$key]" ${AWS_ECS_TASKDEF_NAME} $AWS_ACCOUNT_ID ${AWS_DEFAULT_REGION} ${AWS_ECR_REP_NAME} ${TAG})
-    #done
 
     tasks=("${task_def_storage}" "${task_def_web}")
 }
