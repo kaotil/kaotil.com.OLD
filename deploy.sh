@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 
 # valiabls
-#AWS_DEFAULT_REGION=ap-northeast-1
 AWS_ECS_TASKDEF_NAME=ecs-task
 AWS_ECS_CLUSTER_NAME=ecs-cluster
 AWS_ECS_SERVICE_NAME=ecs-service
-AWS_ECR_REP_NAME=kaotil.com/web
+AWS_ECR_REP_NAME=("kaotil.com/storage" "kaotil.com/web")
 
 # Create Task Definition
 make_task_def(){
@@ -66,9 +65,14 @@ deploy_cluster() {
 
 
 push_ecr_image(){
-	eval $(aws ecr get-login --region ${AWS_DEFAULT_REGION})
-        docker tag ecs_web:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ECR_REP_NAME}:latest
-	docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ECR_REP_NAME}:latest
+    eval $(aws ecr get-login --region ${AWS_DEFAULT_REGION})
+
+    for rep_name in ${AWS_ECR_REP_NAME[@]}
+    do
+        echo "${rep_name}"
+        docker tag ecs_web:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${rep_name}:latest
+        docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${rep_name}:latest
+    done
 }
 
 register_definition() {
