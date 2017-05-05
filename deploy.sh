@@ -68,12 +68,12 @@ make_task_def(){
 register_definition() {
 
     echo "[${tasks[0]},${tasks[1]}]"
-    #if revision=$(aws ecs register-task-definition --container-definitions "[${tasks[0]},${tasks[1]}]" --family ${AWS_ECS_TASKDEF_NAME} | $JQ '.taskDefinition.taskDefinitionArn'); then
-    #    echo "Revision: $revision"
-    #else
-    #    echo "Failed to register task definition"
-    #    return 1
-    #fi
+    if revision=$(aws ecs register-task-definition --container-definitions "[${tasks[0]},${tasks[1]}]" --family ${AWS_ECS_TASKDEF_NAME} | $JQ '.taskDefinition.taskDefinitionArn'); then
+        echo "Revision: $revision"
+    else
+        echo "Failed to register task definition"
+        return 1
+    fi
 
 }
 
