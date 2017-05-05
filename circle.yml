@@ -8,7 +8,8 @@ dependencies:
     - sudo service docker start
     - cd ecs; docker-compose build --no-cache
 test:
-  #override:
+  override:
+    - echo Hello World
   #  - cd ecs; docker-compose up -d
   #  - curl http://localhost -o /dev/null -w '%{http_code}\n' -s | grep 200
 deployment:
