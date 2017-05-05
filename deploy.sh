@@ -43,8 +43,7 @@ make_task_def(){
     ]'
     task_def_storage=$(printf "$task_template_storage" ${AWS_ECS_CONTAINER_NAMES[0]} $AWS_ACCOUNT_ID ${AWS_DEFAULT_REGION} ${AWS_ECR_REP_NAMES[0]} ${TAG})
 
-    task_template_web='[
-        {
+    task_template_web='{
             "name": "%s",
             "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
             "essential": true,
@@ -62,12 +61,10 @@ make_task_def(){
                 "readOnly": true
               }
             ]
-        }
-    ]'
+    }'
     task_def_web=$(printf "$task_template_web" ${AWS_ECS_CONTAINER_NAMES[1]} $AWS_ACCOUNT_ID ${AWS_DEFAULT_REGION} ${AWS_ECR_REP_NAMES[1]} ${TAG})
 
-    task_template='[
-        {
+    task_template='{
             "name": "%s",
             "image": "%s.dkr.ecr.%s.amazonaws.com/%s:%s",
             "essential": true,
@@ -79,25 +76,19 @@ make_task_def(){
                     "hostPort": 80
                 }
             ]
-        }
-    ]'
+    }'
 
     tasks=("${task_def_storage}" "${task_def_web}")
 }
 
 register_definition() {
 
-    for key in ${!tasks[@]}
-    do
-        echo ${tasks[$key]}
-
-        if revision=$(aws ecs register-task-definition --container-definitions "${tasks[$key]}" --family ${AWS_ECS_TASKDEF_NAME} | $JQ '.taskDefinition.taskDefinitionArn'); then
-            echo "Revision: $revision"
-        else
-            echo "Failed to register task definition"
-            return 1
-        fi
-    done
+    if revision=$(aws ecs register-task-definition --container-definitions "[${tasks[0]}, ${tasks[1]}]" --family ${AWS_ECS_TASKDEF_NAME} | $JQ '.taskDefinition.taskDefinitionArn'); then
+        echo "Revision: $revision"
+    else
+        echo "Failed to register task definition"
+        return 1
+    fi
 }
 
 deploy_cluster() {
