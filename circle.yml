@@ -14,10 +14,6 @@ test:
     - cd ecs; docker-compose up -d
     - curl http://localhost -o /dev/null -w '%{http_code}\n' -s | grep 200
 deployment:
-  dev:
-    branch: dev 
-    commands:
-      - ./deploy.sh
   master:
     branch: master
     commands:
