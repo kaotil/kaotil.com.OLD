@@ -1,0 +1,12 @@
+web:
+  build: ./web
+  hostname: web
+  container_name: web
+  ports:
+    - '80:80'
+  volumes_from:
+    - storage
+storage:
+  build: ./storage
+  hostname: storage
+  container_name: storage
