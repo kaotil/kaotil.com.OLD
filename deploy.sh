@@ -90,6 +90,7 @@ deploy_cluster() {
 
     make_task_def
     register_definition
+    stop_task
     if [[ $(aws ecs update-service --cluster ${AWS_ECS_CLUSTER_NAME} --service ${AWS_ECS_SERVICE_NAME} --task-definition $revision | \
                 $JQ '.service.taskDefinition') != $revision ]]; then
         echo "Error updating service."
