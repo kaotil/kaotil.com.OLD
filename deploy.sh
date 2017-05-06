@@ -103,6 +103,6 @@ deploy_cluster() {
 
 
 push_ecr_image
-#make_task_def
-#register_definition
+make_task_def
+register_definition
 #deploy_cluster
