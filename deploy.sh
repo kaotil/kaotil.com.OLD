@@ -6,7 +6,7 @@ AWS_ECS_CLUSTER_NAME=ecs-cluster
 AWS_ECS_SERVICE_NAME=ecs-service
 AWS_ECS_CONTAINER_NAMES=("storage" "web")
 AWS_ECR_REP_NAMES=("kaotil.com/storage" "kaotil.com/web")
-TAG=$CIRCLE_SHA1
+TAG=latet
 
 # more bash-friendly output for jq
 JQ="jq --raw-output --exit-status"
@@ -14,12 +14,14 @@ JQ="jq --raw-output --exit-status"
 push_ecr_image(){
     eval $(aws ecr get-login --region ${AWS_DEFAULT_REGION})
 
-    for rep_name in ${AWS_ECR_REP_NAMES[@]}
+    for key in ${!AWS_ECS_CONTAINER_NAMES[@]}
     do
-        echo "${rep_name}"
-        docker tag ecs_web:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${rep_name}:${TAG}
-        #docker tag ecs_web:${TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${rep_name}:${TAG}
-        docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${rep_name}:${TAG}
+        # debug command
+        echo "docker tag ecs_${AWS_ECS_CONTAINER_NAMES[$key]}:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ECR_REP_NAMES[$key]}:${TAG}"
+        echo "docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ECR_REP_NAMES[$key]}:${TAG}"
+
+        docker tag ecs_${AWS_ECS_CONTAINER_NAMES[$key]}:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ECR_REP_NAMES[$key]}:${TAG}
+        docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${AWS_ECR_REP_NAMES[$key]}:${TAG}
     done
 }
 
@@ -101,6 +103,6 @@ deploy_cluster() {
 
 
 push_ecr_image
-make_task_def
-register_definition
+#make_task_def
+#register_definition
 #deploy_cluster
