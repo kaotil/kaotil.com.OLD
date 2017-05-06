@@ -75,7 +75,7 @@ register_definition() {
 }
 
 stop_task() {
-    task_arns=$(aws ecs list-tasks --cluster ${AWS_ECS_CLUSTER_NAME} | $JQ '.taskArns[]')
+    task_arns=$(aws ecs list-tasks --cluster ${AWS_ECS_CLUSTER_NAME} | $JQ '.taskArns')
 
     len=$(echo $task_arns | jq length)
     for i in `seq 0 $(($len-1))`
