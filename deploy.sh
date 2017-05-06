@@ -74,6 +74,18 @@ register_definition() {
 
 }
 
+stop_task() {
+    task_arns=$(aws ecs list-tasks --cluster ${AWS_ECS_CLUSTER_NAME} | $JQ '.taskArns[]')
+
+    len=$(echo $task_arns | jq length)
+    for i in `seq 0 $(($len-1))`
+    do
+        task_arn=$(echo $task_arns | $JQ .[$i])
+        echo $task_arn
+        aws ecs stop-task --cluster ${AWS_ECS_CLUSTER_NAME} --task $task_arn
+    done
+}
+
 deploy_cluster() {
 
     make_task_def
@@ -100,7 +112,6 @@ deploy_cluster() {
     echo "Service update took too long."
     return 1
 }
-
 
 push_ecr_image
 deploy_cluster
