@@ -17,7 +17,8 @@ push_ecr_image(){
     for rep_name in ${AWS_ECR_REP_NAMES[@]}
     do
         echo "${rep_name}"
-        docker tag ecs_web:${TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${rep_name}:${TAG}
+        docker tag ecs_web:latest ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${rep_name}:${TAG}
+        #docker tag ecs_web:${TAG} ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${rep_name}:${TAG}
         docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${rep_name}:${TAG}
     done
 }
