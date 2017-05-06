@@ -6,7 +6,7 @@ AWS_ECS_CLUSTER_NAME=ecs-cluster
 AWS_ECS_SERVICE_NAME=ecs-service
 AWS_ECS_CONTAINER_NAMES=("storage" "web")
 AWS_ECR_REP_NAMES=("kaotil.com/storage" "kaotil.com/web")
-TAG=latest
+TAG=$CIRCLE_SHA1
 
 # more bash-friendly output for jq
 JQ="jq --raw-output --exit-status"
@@ -99,7 +99,7 @@ deploy_cluster() {
 }
 
 
-#push_ecr_image
+push_ecr_image
 make_task_def
 register_definition
 #deploy_cluster
